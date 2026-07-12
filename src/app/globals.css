@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-parchment: #f5efe6;
+  --color-ink: #1a1a1a;
+  --color-brass: #d4af37;
+  --color-brass-dark: #b8935f;
+  --color-burgundy: #800020;
+
+  /* ফন্টস */
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Playfair Display', serif;
+
+  /* বর্ডার রেডিয়াস ও শ্যাডো */
+  --radius-card: 12px;
+  --shadow-ticket: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-ticket-hover: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* 2. Base Styles (v4 এ সরাসরি CSS সিলেক্টর লিখতে হয়) */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-parchment text-ink font-body antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @apply font-display text-ink;
+}
+
+:focus-visible {
+  outline: 2px solid #B8935F;
+  outline-offset: 3px;
+}
+
+/* 3. Custom Utility/Component Classes (v4 এ @layer ছাড়া সরাসরি ক্লাস লিখতে হয়) */
+
+/* Course marker */
+.course-marker {
+  @apply flex items-center gap-3 mb-4;
+}
+
+.course-marker__index {
+  @apply font-mono text-xs tracking-[0.2em] text-brass-dark;
+}
+
+.course-marker__line {
+  @apply h-px flex-1 bg-brass/30;
+}
+
+/* Signature card: the "order ticket" */
+.ticket-card {
+  @apply relative bg-white rounded-card shadow-ticket transition-all duration-300 overflow-hidden;
+}
+
+.ticket-card:hover {
+  @apply shadow-ticket-hover -translate-y-1;
+}
+
+.ticket-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, #B8935F 0 10px, transparent 10px 18px);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink text-parchment px-6 py-3 text-sm font-semibold tracking-wide transition-colors hover:bg-burgundy;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink/20 text-ink px-6 py-3 text-sm font-semibold tracking-wide transition-colors hover:border-ink;
+}
+
+.eyebrow {
+  @apply font-mono text-xs tracking-[0.25em] uppercase text-brass-dark;
+}
