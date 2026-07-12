@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { usePizzaall } from "@/lib/getData";
+import { usePizzaall, useReservePizza } from "@/lib/getData";
 import type { Pizza, PizzaSize } from "@/types/restaurant";
 
 type PizzaDoc = Pizza & { _id: string };
@@ -17,7 +17,6 @@ export default function PizzaInfo() {
     const { data: response, isLoading, isError } = usePizzaall();
     const allPizzas: PizzaDoc[] = response?.data ?? [];
     const pizza = allPizzas.find((p) => p.id === id);
-
     if (isLoading) return <StatusMessage text="Loading..." />;
     if (isError) return <StatusMessage text="Failed to load data." />;
     if (!pizza) return <StatusMessage text="We couldn't find that pizza." showBackLink />;
@@ -31,8 +30,6 @@ function PizzaDetail({ pizza }: { pizza: PizzaDoc }) {
     return (
         <div className="min-h-screen bg-[#F5EFE6] text-[#241713]">
             <div className="mx-auto max-w-6xl px-6 py-10 lg:px-10">
-             
-
                 <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2">
                     <PizzaImage pizza={pizza} />
 
@@ -43,7 +40,7 @@ function PizzaDetail({ pizza }: { pizza: PizzaDoc }) {
                             selectedSize={selectedSize}
                             onSelect={setSelectedSize}
                         />
-                        <ReserveButton pizza={pizza} price={selectedSize.price} />
+                        <ReserveButton selectsizepizza={selectedSize} pizza={pizza} price={selectedSize.price} />
                         <TableInfo pizza={pizza} />
                         <SoftDrinks pizza={pizza} />
                     </div>
@@ -69,7 +66,7 @@ function StatusMessage({ text, showBackLink }: { text: string; showBackLink?: bo
     );
 }
 
- 
+
 
 function PizzaImage({ pizza }: { pizza: PizzaDoc }) {
     return (
@@ -183,24 +180,77 @@ function SizePicker({
     );
 }
 
-function ReserveButton({ pizza, price }: { pizza: PizzaDoc; price: number }) {
+function ReserveButton({
+    pizza,
+    price,
+    selectsizepizza
+}: {
+    pizza: PizzaDoc;
+    price: number;
+    selectsizepizza: PizzaSize
+}) {
+
+    const { mutate, isPending } = useReservePizza();
+
+    const handleReserve = () => {
+        mutate({
+            name: "Sagor Saha",
+            email: "text@gmail.com",
+            pizzaName: pizza.pizzaName,
+            image: pizza.pizzaImage,
+            price: pizza.price,
+            size: selectsizepizza,
+            tableName: pizza.tableName,
+            chairs: pizza.chairs,
+            drinks: pizza.softDrinks,
+        });
+    };
+
+
+
     return (
         <motion.button
-            whileHover="hover"
+            onClick={handleReserve}
+            whileHover={!isPending && pizza.inStock ? "hover" : undefined}
             initial="rest"
             animate="rest"
-            disabled={!pizza.inStock}
-            className="group mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#C1440E] py-3.5 text-sm font-semibold text-[#F5EFE6] shadow-lg shadow-[#C1440E]/20 transition-colors hover:bg-[#A8380C] disabled:cursor-not-allowed disabled:bg-[#241713]/20 disabled:text-[#241713]/50 disabled:shadow-none"
+            disabled={!pizza.inStock || isPending}
+            className="group mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#C1440E] py-3.5 text-sm font-semibold text-[#F5EFE6] shadow-lg shadow-[#C1440E]/20 transition-colors hover:bg-[#A8380C] disabled:cursor-not-allowed disabled:bg-[#241713]/20 disabled:text-[#241713]/50 disabled:shadow-none"
         >
-            <span>{pizza.inStock ? `Reserve — ৳${price}` : "Currently sold out"}</span>
-            {pizza.inStock && (
+            <span>
+                {isPending
+                    ? "Reserving..."
+                    : pizza.inStock
+                        ? `Reserve — ৳${price}`
+                        : "Currently Sold Out"}
+            </span>
+
+            {!isPending && pizza.inStock && (
                 <motion.span
-                    variants={{ rest: { x: 0 }, hover: { x: 4 } }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    variants={{
+                        rest: { x: 0 },
+                        hover: { x: 4 },
+                    }}
+                    transition={{
+                        duration: 0.25,
+                        ease: "easeOut",
+                    }}
                     aria-hidden
                 >
                     →
                 </motion.span>
+            )}
+
+            {isPending && (
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                        repeat: Infinity,
+                        duration: 0.8,
+                        ease: "linear",
+                    }}
+                    className="h-4 w-4 rounded-full border-2 border-white border-t-transparent"
+                />
             )}
         </motion.button>
     );

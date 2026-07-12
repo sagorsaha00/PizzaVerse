@@ -75,7 +75,7 @@ export default function Hero() {
             </motion.div>
 
             <Link
-              href="/menu?filter=tonight"
+              href="/"
               className="btn-outline border-[#241713]/20 text-[#241713] transition-colors hover:border-[#241713]/50"
             >
               See tonight's specials

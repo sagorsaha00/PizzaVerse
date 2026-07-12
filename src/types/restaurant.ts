@@ -1,19 +1,6 @@
 export type PriceTier = "$" | "$$" | "$$$" | "$$$$";
 
-export interface Restaurant {
-  id: string;
-  name: string;
-  cuisine: string;
-  neighbourhood: string;
-  city: string;
-  rating: number;
-  reviewCount: number;
-  priceTier: PriceTier;
-  image: string;
-  shortDescription: string;
-  tags: string[];
-  availableTonight?: boolean;
-}
+
 
 export interface Category {
   id: string;
@@ -36,29 +23,14 @@ export interface FaqItem {
   answer: string;
 }
 
-// ── Shared ────────────────────────────────────────────────────────────────
-
-export type PriceTier = "$" | "$$" | "$$$" | "$$$$";
-
-export interface Review {
-  id: string;
-  author: string;
-  avatar?: string;
-  rating: number; // 1–5
-  comment: string;
-  date: string; // ISO date, e.g. "2026-06-14"
-}
-
-// ── Chef ─────────────────────────────────────────────────────────────────
-
 export interface Chef {
   id: string;
   name: string;
   image?: string;
-  specialty?: string; // e.g. "Neapolitan dough"
+  specialty?: string;
 }
 
-// ── Drinks ───────────────────────────────────────────────────────────────
+
 
 
 export type PizzaSizeLabel = "Small" | "Medium" | "Large" | "Family";
@@ -81,9 +53,9 @@ export interface Review {
   id: string;
   author: string;
   avatar?: string;
-  rating: number; // 1–5
+  rating: number;
   comment: string;
-  date: string; // ISO date
+  date: string;
 }
 
 export interface Pizza {
@@ -93,26 +65,32 @@ export interface Pizza {
   neighbourhood: string;
   city: string;
   chef: string;
-
-  // menu item
   pizzaImage: string;
   pizzaDescription: string;
   pizzaSize: PizzaSize[];
-  price: number; // starting price, i.e. smallest size
+  price: number;
   priceTier: PriceTier;
   softDrinks: SoftDrink[];
   tags: string[];
   inStock: boolean;
   availableTonight?: boolean;
-
-  // seating
   tableName: string;
   chairs: number;
   forFamily: boolean;
-  freeTime: string[]; // readable availability windows
-
-  // social proof
+  freeTime: string[]
   reviews: Review[];
   rating: number;
   reviewCount: number;
+}
+
+export interface ReservePayload {
+  name: string;
+  email: string;
+  pizzaName: string;
+  image: string;
+  price: number;
+  size: PizzaSize;
+  tableName: string;
+  chairs: number;
+  drinks: SoftDrink[];
 }
