@@ -7,7 +7,7 @@ import dns from 'node:dns';
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const dbUrl = process.env.DATABASE_URL;
-const authUrl = process.env.BETTER_AUTH_URL;
+const authUrl = 'https://pizza-verse-sage.vercel.app';
 const authSecret = process.env.BETTER_AUTH_SECRET;
 const googleId = process.env.GOOGLE_CLIENT_ID;
 const googleSecret = process.env.GOOGLE_CLIENT_SECRET;

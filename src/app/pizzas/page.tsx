@@ -44,15 +44,13 @@ export default function AllPizzasPage() {
     const startIndex = (currentPage - 1) * PIZZAS_PER_PAGE;
     const pizzasOnThisPage = filteredPizzas.slice(startIndex, startIndex + PIZZAS_PER_PAGE);
 
-    // Jump back to page 1 whenever the search actually changes or a filter
-    // chip is clicked — otherwise you could land on a page that no longer
-    // has any results.
+    
+   
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, activeFilter]);
 
-    // If the list shrinks (say, a filter removes most pizzas) and the
-    // current page no longer exists, fall back to the last valid page.
+  
     useEffect(() => {
         if (currentPage > totalPages) {
             setCurrentPage(totalPages);
