@@ -26,11 +26,13 @@ export default function Navbar() {
   const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
   const { data: session } = authClient.useSession();
+
   const syncFromStorage = () => setAuthState(readAuth());
+
   useEffect(() => {
     syncFromStorage();
 
-    // Same-tab updates (dispatched manually) + cross-tab updates
+    // Same-tab updates + cross-tab updates
     window.addEventListener("auth-changed", syncFromStorage);
     window.addEventListener("storage", syncFromStorage);
     return () => {
@@ -39,9 +41,10 @@ export default function Navbar() {
     };
   }, []);
 
-
+ 
   useEffect(() => {
-    if (session?.user && !authState?.isLoggedIn) {
+   
+    if (session?.user) {
       const u = session.user as any;
       const mirrored: AuthData = {
         isLoggedIn: true,
@@ -50,15 +53,18 @@ export default function Navbar() {
           name: u.name ?? "",
           email: u.email ?? "",
           picUrl: u.image ?? u.picUrl ?? "",
-
         },
       };
       localStorage.setItem("library-auth-storage", JSON.stringify(mirrored));
       setAuthState(mirrored);
+    } else if (session === null) {
+      
+      clearAuth();
+      setAuthState(null);
     }
-  }, [session, authState]);
+  }, [session]);  
 
-  // Close the profile dropdown when clicking outside of it
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
@@ -73,12 +79,14 @@ export default function Navbar() {
   const user = authState?.user;
   const links = isLoggedIn ? loggedInLinks : loggedOutLinks;
 
+ 
   const handleLogout = async () => {
-    await authClient.signOut();
-    clearAuth();
-    setAuthState(null);
     setOpen(false);
     setProfileOpen(false);
+
+    await authClient.signOut(); 
+    clearAuth();                
+    setAuthState(null);        
     router.push("/login");
   };
 
@@ -102,7 +110,6 @@ export default function Navbar() {
           </div>
         </Link>
 
-   
         <div className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
             <Link
@@ -115,7 +122,6 @@ export default function Navbar() {
           ))}
         </div>
 
-   
         <div className="hidden items-center gap-4 md:flex">
           {isLoggedIn && user ? (
             <div className="relative" ref={profileRef}>
@@ -171,7 +177,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Hamburger Toggle */}
+        
         <button aria-label="Toggle menu" className="flex flex-col gap-1.5 md:hidden" onClick={() => setOpen(!open)}>
           <span className={`h-[1.5px] w-6 bg-ink transition-transform ${open ? "translate-y-[6.5px] rotate-45" : ""}`} />
           <span className={`h-[1.5px] w-6 bg-ink transition-opacity ${open ? "opacity-0" : ""}`} />
@@ -179,7 +185,7 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile Drawer Menu */}
+     
       {open && (
         <div className="border-t border-ink/10 bg-parchment px-6 pb-6 md:hidden">
           <div className="flex flex-col gap-4 pt-4">
