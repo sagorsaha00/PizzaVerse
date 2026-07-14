@@ -1,7 +1,4 @@
 export type PriceTier = "$" | "$$" | "$$$" | "$$$$";
-
-
-
 export interface Category {
   id: string;
   name: string;
@@ -29,9 +26,6 @@ export interface Chef {
   image?: string;
   specialty?: string;
 }
-
-
-
 
 export type PizzaSizeLabel = "Small" | "Medium" | "Large" | "Family";
 

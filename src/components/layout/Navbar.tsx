@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-
-// Toggle this to preview logged-in nav state (design only — no auth wired up).
-const IS_LOGGED_IN = false;
+import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { readAuth, clearAuth, AuthData } from "@/lib/auth-storage";
 
 const loggedOutLinks = [
   { href: "/restaurants", label: "Explore" },
@@ -12,17 +13,80 @@ const loggedOutLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-const loggedInLinks = [
-  { href: "/restaurants", label: "Explore" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/items/add", label: "Add Restaurant" },
-  { href: "/items/manage", label: "Manage" },
-  { href: "/about", label: "About" },
-];
-
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const links = IS_LOGGED_IN ? loggedInLinks : loggedOutLinks;
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [authState, setAuthState] = useState<AuthData | null>(null);
+  const router = useRouter();
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  // ✅ Hook must be called at the top level of the component, not inside
+  // a plain function that you call during render.
+  const { data: session } = authClient.useSession();
+
+  // Load whatever is currently in localStorage (credential login/register)
+  const syncFromStorage = () => setAuthState(readAuth());
+
+  useEffect(() => {
+    syncFromStorage();
+
+    // Same-tab updates (dispatched manually) + cross-tab updates
+    window.addEventListener("auth-changed", syncFromStorage);
+    window.addEventListener("storage", syncFromStorage);
+    return () => {
+      window.removeEventListener("auth-changed", syncFromStorage);
+      window.removeEventListener("storage", syncFromStorage);
+    };
+  }, []);
+
+  // ✅ If better-auth reports a cookie session (e.g. after Google login)
+  // but localStorage doesn't know about it yet, mirror it in so the rest
+  // of the app (which reads localStorage) stays consistent.
+  useEffect(() => {
+    if (session?.user && !authState?.isLoggedIn) {
+      const u = session.user as any;
+      const mirrored: AuthData = {
+        isLoggedIn: true,
+        user: {
+          _id: u.id ?? u._id ?? "",
+          name: u.name ?? "",
+          email: u.email ?? "",
+          picUrl: u.image ?? u.picUrl ?? "",
+          role: u.role ?? "user",
+        },
+      };
+      localStorage.setItem("library-auth-storage", JSON.stringify(mirrored));
+      setAuthState(mirrored);
+    }
+  }, [session, authState]);
+
+  // Close the profile dropdown when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isLoggedIn = !!authState?.isLoggedIn;
+  const user = authState?.user;
+  const links = loggedOutLinks;
+
+  const handleLogout = async () => {
+    // Sign out of the cookie session (covers Google login)
+    await authClient.signOut();
+    // Clear the local mirror (covers credential login)
+    clearAuth();
+    setAuthState(null);
+    setOpen(false);
+    setProfileOpen(false);
+    router.push("/");
+  };
+
+  const isValidPic = user?.picUrl && !user.picUrl.includes("/register");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-ink/10 bg-parchment/90 backdrop-blur-md">
@@ -30,22 +94,19 @@ export default function Navbar() {
         <Link href="/" className="group flex items-center gap-4">
           <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-[#E3A857] bg-[#241713]">
             <span className="text-2xl">🔥</span>
-
             <span className="absolute -bottom-1 h-3 w-3 rounded-full bg-[#C1440E]" />
           </div>
 
           <div>
             <h2 className="font-serif text-3xl font-bold text-white">
               Pizza
-              <span className="text-[#E3A857]">Verse</span>
+              <span className="text-[#C1440E]">Verse</span>
             </h2>
-
-            <span className="text-xs tracking-[4px] text-gray-400">
-              EST. 1999
-            </span>
+            <span className="text-xs tracking-[4px] text-gray-400">EST. 1999</span>
           </div>
         </Link>
 
+        {/* Desktop Navigation Links */}
         <div className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
             <Link
@@ -58,17 +119,53 @@ export default function Navbar() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
-          {IS_LOGGED_IN ? (
-            <button className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-mono text-xs text-parchment">
-              JD
-            </button>
+        {/* Desktop Action Area */}
+        <div className="hidden items-center gap-4 md:flex">
+          {isLoggedIn && user ? (
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen((prev) => !prev)}
+                className="flex items-center gap-2 rounded-full transition hover:opacity-80"
+                aria-haspopup="true"
+                aria-expanded={profileOpen}
+              >
+                <div className="relative h-9 w-9 overflow-hidden rounded-full border border-ink/10 bg-ink flex items-center justify-center text-parchment font-semibold text-xs">
+                  {isValidPic ? (
+                    <Image src={user.picUrl} alt={user.name} fill sizes="36px" className="object-cover" />
+                  ) : (
+                    <span>{user.name?.slice(0, 2).toUpperCase() || "US"}</span>
+                  )}
+                </div>
+                <svg
+                  className={`h-3 w-3 text-ink/60 transition-transform ${profileOpen ? "rotate-180" : ""}`}
+                  viewBox="0 0 12 8"
+                  fill="none"
+                >
+                  <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-2 w-44 overflow-hidden rounded-xl border border-ink/10 bg-parchment shadow-lg">
+                  <Link
+                    href="/dashboard"
+                    className="block px-4 py-2.5 text-sm font-semibold text-ink/80 transition hover:bg-ink/5 hover:text-ink"
+                    onClick={() => setProfileOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[#C1440E] transition hover:bg-ink/5 hover:text-[#A8380C]"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
-              <Link
-                href="/login"
-                className="text-sm font-semibold text-ink/80 hover:text-ink"
-              >
+              <Link href="/login" className="text-sm font-semibold text-ink/80 hover:text-ink">
                 Log in
               </Link>
               <Link href="/register" className="btn-primary">
@@ -78,46 +175,44 @@ export default function Navbar() {
           )}
         </div>
 
-        <button
-          aria-label="Toggle menu"
-          className="flex flex-col gap-1.5 md:hidden"
-          onClick={() => setOpen(!open)}
-        >
-          <span
-            className={`h-[1.5px] w-6 bg-ink transition-transform ${open ? "translate-y-[6.5px] rotate-45" : ""
-              }`}
-          />
-          <span
-            className={`h-[1.5px] w-6 bg-ink transition-opacity ${open ? "opacity-0" : ""
-              }`}
-          />
-          <span
-            className={`h-[1.5px] w-6 bg-ink transition-transform ${open ? "-translate-y-[6.5px] -rotate-45" : ""
-              }`}
-          />
+        {/* Hamburger Toggle */}
+        <button aria-label="Toggle menu" className="flex flex-col gap-1.5 md:hidden" onClick={() => setOpen(!open)}>
+          <span className={`h-[1.5px] w-6 bg-ink transition-transform ${open ? "translate-y-[6.5px] rotate-45" : ""}`} />
+          <span className={`h-[1.5px] w-6 bg-ink transition-opacity ${open ? "opacity-0" : ""}`} />
+          <span className={`h-[1.5px] w-6 bg-ink transition-transform ${open ? "-translate-y-[6.5px] -rotate-45" : ""}`} />
         </button>
       </nav>
 
+      {/* Mobile Drawer Menu */}
       {open && (
         <div className="border-t border-ink/10 bg-parchment px-6 pb-6 md:hidden">
           <div className="flex flex-col gap-4 pt-4">
             {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-base font-medium text-ink/80"
-                onClick={() => setOpen(false)}
-              >
+              <Link key={link.href} href={link.href} className="text-base font-medium text-ink/80" onClick={() => setOpen(false)}>
                 {link.label}
               </Link>
             ))}
+
             <div className="mt-2 flex flex-col gap-3 border-t border-ink/10 pt-4">
-              <Link href="/login" className="text-sm font-semibold text-ink">
-                Log in
-              </Link>
-              <Link href="/register" className="btn-primary w-full">
-                Get started
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link href="/dashboard" className="text-base font-semibold text-ink" onClick={() => setOpen(false)}>
+                    Dashboard
+                  </Link>
+                  <button onClick={handleLogout} className="text-left text-base font-semibold text-[#C1440E]">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="text-sm font-semibold text-ink" onClick={() => setOpen(false)}>
+                    Log in
+                  </Link>
+                  <Link href="/register" className="btn-primary w-full" onClick={() => setOpen(false)}>
+                    Get started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
