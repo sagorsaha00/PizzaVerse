@@ -9,13 +9,13 @@ import { readAuth, clearAuth, AuthData } from "@/lib/auth-storage";
 
 const loggedOutLinks = [
   { href: "#explore", label: "Explore" },
-  { href: "#About", label: "About" },
-  { href: "#contact", label: "Contact" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 const loggedInLinks = [
   { href: "#explore", label: "Explore" },
-  { href: "#About", label: "About" },
-  { href: "#contact", label: "Contact" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
   { href: "/addpizza", label: "Add pizza" },
 ];
 

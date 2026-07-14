@@ -74,12 +74,7 @@ export default function Hero() {
               </Link>
             </motion.div>
 
-            <Link
-              href="/"
-              className="btn-outline border-[#241713]/20 text-[#241713] transition-colors hover:border-[#241713]/50"
-            >
-              See tonight's specials
-            </Link>
+           
           </motion.div>
 
           <motion.div
