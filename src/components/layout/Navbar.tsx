@@ -79,7 +79,7 @@ export default function Navbar() {
     setAuthState(null);
     setOpen(false);
     setProfileOpen(false);
-    router.push("/");
+    router.push("/login");
   };
 
   const isValidPic = user?.picUrl && !user.picUrl.includes("/register");
