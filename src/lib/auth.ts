@@ -67,7 +67,7 @@ export const auth = betterAuth({
         },
         trustedOrigins: [
             authUrl!, 
-            "https://pizza-verse-blue.vercel.app/", 
+            "https://pizza-verse-blue.vercel.app", 
             "https://pizza-verse-bakcend.vercel.app"
         ]
     }
