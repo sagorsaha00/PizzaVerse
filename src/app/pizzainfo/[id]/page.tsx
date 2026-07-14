@@ -7,6 +7,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { usePizzaall, useReservePizza } from "@/lib/getData";
 import type { Pizza, PizzaSize } from "@/types/restaurant";
+import { useSession } from "@/lib/auth-client";
 
 type PizzaDoc = Pizza & { _id: string };
 
@@ -14,6 +15,7 @@ const EASE = [0.22, 1, 0.36, 1];
 
 export default function PizzaInfo() {
     const { id } = useParams<{ id: string }>();
+
     const { data: response, isLoading, isError } = usePizzaall();
     const allPizzas: PizzaDoc[] = response?.data ?? [];
     const pizza = allPizzas.find((p) => p.id === id);
@@ -26,7 +28,9 @@ export default function PizzaInfo() {
 
 function PizzaDetail({ pizza }: { pizza: PizzaDoc }) {
     const [selectedSize, setSelectedSize] = useState<PizzaSize>(pizza.pizzaSize[0]);
-
+    const { data: session } = useSession();
+    const email = session?.user?.email;
+    const name = session?.user?.name;
     return (
         <div className="min-h-screen bg-[#F5EFE6] text-[#241713]">
             <div className="mx-auto max-w-6xl px-6 py-10 lg:px-10">
@@ -40,7 +44,13 @@ function PizzaDetail({ pizza }: { pizza: PizzaDoc }) {
                             selectedSize={selectedSize}
                             onSelect={setSelectedSize}
                         />
-                        <ReserveButton selectsizepizza={selectedSize} pizza={pizza} price={selectedSize.price} />
+                        <ReserveButton
+                            name={name ?? ''}
+                            email={email ?? ''}
+                            selectsizepizza={selectedSize}
+                            pizza={pizza}
+                            price={selectedSize.price}
+                        />
                         <TableInfo pizza={pizza} />
                         <SoftDrinks pizza={pizza} />
                     </div>
@@ -183,19 +193,23 @@ function SizePicker({
 function ReserveButton({
     pizza,
     price,
-    selectsizepizza
+    selectsizepizza,
+    email,
+    name
 }: {
     pizza: PizzaDoc;
     price: number;
-    selectsizepizza: PizzaSize
+    selectsizepizza: PizzaSize,
+    email: string
+    name: string
 }) {
 
     const { mutate, isPending } = useReservePizza();
 
     const handleReserve = () => {
         mutate({
-            name: "Sagor Saha",
-            email: "text@gmail.com",
+            name: name,
+            email: email,
             pizzaName: pizza.pizzaName,
             image: pizza.pizzaImage,
             price: pizza.price,
@@ -211,21 +225,23 @@ function ReserveButton({
     return (
         <motion.button
             onClick={handleReserve}
-            whileHover={!isPending && pizza.inStock ? "hover" : undefined}
+            disabled={!email || !name || !pizza.inStock || isPending}
+            whileHover={!isPending && pizza.inStock && email && name ? "hover" : undefined}
             initial="rest"
             animate="rest"
-            disabled={!pizza.inStock || isPending}
             className="group mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#C1440E] py-3.5 text-sm font-semibold text-[#F5EFE6] shadow-lg shadow-[#C1440E]/20 transition-colors hover:bg-[#A8380C] disabled:cursor-not-allowed disabled:bg-[#241713]/20 disabled:text-[#241713]/50 disabled:shadow-none"
         >
             <span>
-                {isPending
-                    ? "Reserving..."
-                    : pizza.inStock
-                        ? `Reserve — ৳${price}`
-                        : "Currently Sold Out"}
+                {!email || !name
+                    ? "Please login first"
+                    : isPending
+                        ? "Reserving..."
+                        : !pizza.inStock
+                            ? "Currently Sold Out"
+                            : `Reserve — ৳${price}`}
             </span>
 
-            {!isPending && pizza.inStock && (
+            {!isPending && pizza.inStock && email && name && (
                 <motion.span
                     variants={{
                         rest: { x: 0 },

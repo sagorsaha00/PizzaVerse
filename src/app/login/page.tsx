@@ -33,8 +33,7 @@ export default function Login() {
             return response.json();
         },
         onSuccess: (data) => {
-            // ✅ Save in the SAME shape the Navbar (and Register page) expect:
-            // { user: {...}, isLoggedIn: true } — not { data, isLoggedIn: true }
+          
             saveAuth(data.user);
             console.log("Login successful:", data);
         },

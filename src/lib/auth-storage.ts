@@ -15,7 +15,6 @@ const KEY = "library-auth-storage";
 export function saveAuth(user: AuthUser) {
     const payload: AuthData = { user, isLoggedIn: true };
     localStorage.setItem(KEY, JSON.stringify(payload));
-    // Notify any listeners in the same tab (storage event only fires cross-tab)
     window.dispatchEvent(new Event("auth-changed"));
 }
 
