@@ -8,7 +8,7 @@ export default function FAQ() {
   const [openId, setOpenId] = useState<string | null>(faqs[0]?.id ?? null);
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-20 lg:px-10">
+    <section id='About' className="mx-auto max-w-4xl px-6 py-20 lg:px-10">
       <SectionTitle
         course="Sixth — The Fine Print"
         title="Questions, answered"
@@ -29,17 +29,15 @@ export default function FAQ() {
                   {faq.question}
                 </span>
                 <span
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-ink/15 font-mono text-sm transition-transform duration-300 ${
-                    isOpen ? "rotate-45 border-brass text-brass-dark" : ""
-                  }`}
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-ink/15 font-mono text-sm transition-transform duration-300 ${isOpen ? "rotate-45 border-brass text-brass-dark" : ""
+                    }`}
                 >
                   +
                 </span>
               </button>
               <div
-                className={`grid overflow-hidden transition-all duration-300 ${
-                  isOpen ? "grid-rows-[1fr] pb-6" : "grid-rows-[0fr]"
-                }`}
+                className={`grid overflow-hidden transition-all duration-300 ${isOpen ? "grid-rows-[1fr] pb-6" : "grid-rows-[0fr]"
+                  }`}
               >
                 <p className="overflow-hidden text-sm leading-relaxed text-ink/60">
                   {faq.answer}

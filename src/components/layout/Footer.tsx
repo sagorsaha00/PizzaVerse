@@ -2,24 +2,6 @@ import Link from "next/link";
 
 const columns = [
   {
-    title: "Explore",
-    links: [
-      { label: "All restaurants", href: "/restaurants" },
-      { label: "Categories", href: "/restaurants?view=categories" },
-      { label: "Tonight's tables", href: "/restaurants?filter=available" },
-      { label: "Add your restaurant", href: "/items/add" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About PizzaVerse", href: "/about" },
-      { label: "Contact", href: "/contact" },
-      { label: "Blog", href: "/blog" },
-      { label: "Help & support", href: "/help" },
-    ],
-  },
-  {
     title: "Legal",
     links: [
       { label: "Privacy policy", href: "/privacy" },
@@ -36,7 +18,7 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-parchment/10 bg-ink text-parchment">
+    <footer id='contact' className="border-t border-parchment/10 bg-ink text-parchment">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
         <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
           <div className="col-span-2">

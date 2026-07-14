@@ -4,7 +4,7 @@ import SectionTitle from "@/components/shared/SectionTitle";
 
 export default function Testimonials() {
   return (
-    <section className="bg-parchment-dim py-20">
+    <section id="explore" className="bg-parchment-dim py-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <SectionTitle
           course="Fifth — The Word of Mouth"

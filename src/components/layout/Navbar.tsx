@@ -8,9 +8,15 @@ import { authClient } from "@/lib/auth-client";
 import { readAuth, clearAuth, AuthData } from "@/lib/auth-storage";
 
 const loggedOutLinks = [
-  { href: "/restaurants", label: "Explore" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "#explore", label: "Explore" },
+  { href: "#About", label: "About" },
+  { href: "#contact", label: "Contact" },
+];
+const loggedInLinks = [
+  { href: "#explore", label: "Explore" },
+  { href: "#About", label: "About" },
+  { href: "#contact", label: "Contact" },
+  { href: "/addpizza", label: "Add pizza" },
 ];
 
 export default function Navbar() {
@@ -19,14 +25,8 @@ export default function Navbar() {
   const [authState, setAuthState] = useState<AuthData | null>(null);
   const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
-
-  // ✅ Hook must be called at the top level of the component, not inside
-  // a plain function that you call during render.
   const { data: session } = authClient.useSession();
-
-  // Load whatever is currently in localStorage (credential login/register)
   const syncFromStorage = () => setAuthState(readAuth());
-
   useEffect(() => {
     syncFromStorage();
 
@@ -39,7 +39,7 @@ export default function Navbar() {
     };
   }, []);
 
- 
+
   useEffect(() => {
     if (session?.user && !authState?.isLoggedIn) {
       const u = session.user as any;
@@ -50,7 +50,7 @@ export default function Navbar() {
           name: u.name ?? "",
           email: u.email ?? "",
           picUrl: u.image ?? u.picUrl ?? "",
-         
+
         },
       };
       localStorage.setItem("library-auth-storage", JSON.stringify(mirrored));
@@ -71,12 +71,10 @@ export default function Navbar() {
 
   const isLoggedIn = !!authState?.isLoggedIn;
   const user = authState?.user;
-  const links = loggedOutLinks;
+  const links = isLoggedIn ? loggedInLinks : loggedOutLinks;
 
   const handleLogout = async () => {
-    // Sign out of the cookie session (covers Google login)
     await authClient.signOut();
-    // Clear the local mirror (covers credential login)
     clearAuth();
     setAuthState(null);
     setOpen(false);
@@ -104,7 +102,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
+   
         <div className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
             <Link
@@ -117,7 +115,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop Action Area */}
+   
         <div className="hidden items-center gap-4 md:flex">
           {isLoggedIn && user ? (
             <div className="relative" ref={profileRef}>
@@ -147,14 +145,14 @@ export default function Navbar() {
                 <div className="absolute right-0 top-full mt-2 w-44 overflow-hidden rounded-xl border border-ink/10 bg-parchment shadow-lg">
                   <Link
                     href="/dashboard"
-                    className="block px-4 py-2.5 text-sm font-semibold text-ink/80 transition hover:bg-ink/5 hover:text-ink"
+                    className="block px-4 py-2.5 cursor-pointer text-sm font-semibold text-ink/80 transition hover:bg-ink/5 hover:text-ink"
                     onClick={() => setProfileOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[#C1440E] transition hover:bg-ink/5 hover:text-[#A8380C]"
+                    className="block cursor-pointer w-full px-4 py-2.5 text-left text-sm font-semibold text-[#C1440E] transition hover:bg-ink/5 hover:text-[#A8380C]"
                   >
                     Logout
                   </button>
@@ -163,10 +161,10 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link href="/login" className="text-sm font-semibold text-ink/80 hover:text-ink">
+              <Link href="/login" className=" cursor-pointer text-sm font-semibold text-ink/80 hover:text-ink">
                 Log in
               </Link>
-              <Link href="/register" className="btn-primary">
+              <Link href="/register" className="btn-primary cursor-pointer">
                 Get started
               </Link>
             </>
@@ -197,7 +195,7 @@ export default function Navbar() {
                   <Link href="/dashboard" className="text-base font-semibold text-ink" onClick={() => setOpen(false)}>
                     Dashboard
                   </Link>
-                  <button onClick={handleLogout} className="text-left text-base font-semibold text-[#C1440E]">
+                  <button onClick={handleLogout} className="cursor-pointer text-left text-base font-semibold text-[#C1440E]">
                     Logout
                   </button>
                 </>

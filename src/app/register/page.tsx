@@ -94,12 +94,7 @@ export default function Register() {
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#241713]/80 via-[#241713]/10 to-[#241713]/30" />
 
-                <Link href="/" className="absolute left-8 top-8 flex items-center gap-2 text-[#F5EFE6]">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5EFE6] font-display text-sm font-semibold text-[#241713]">
-                        F
-                    </span>
-                    <span className="font-display text-lg tracking-tight">Fare</span>
-                </Link>
+                 
 
                 <p className="absolute bottom-8 left-8 right-8 font-display text-2xl leading-snug text-[#F5EFE6]">
                     Good pizza, better company.

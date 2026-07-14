@@ -69,7 +69,7 @@ export default function PizzaCard({ pizza }: { pizza: Pizza }) {
                         <span>
                             {pizza.chairs} {pizza.chairs === 1 ? "chair" : "chairs"}
                         </span>
-                        <span>{pizza.softDrinks.length} drinks available</span>
+                        <span>{pizza?.softDrinks?.length} drinks available</span>
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">

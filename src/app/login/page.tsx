@@ -50,7 +50,7 @@ export default function Login() {
 
     const handleGoogleSignIn = async () => {
         try {
-            const { data, error } = await authClient.signIn.social({
+            const {  error } = await authClient.signIn.social({
                 provider: "google",
                 callbackURL: "/",
             });
@@ -60,10 +60,7 @@ export default function Login() {
                 return;
             }
 
-            // ✅ THE ACTUAL FIX: better-auth only sets a cookie session here,
-            // it never touches localStorage. We fetch the resulting session
-            // and mirror it into the same localStorage shape so the rest of
-            // the app (which reads localStorage) sees the user immediately.
+            
             const session = await authClient.getSession();
             if (session?.data?.user) {
                 const u = session.data.user as any;
@@ -93,12 +90,7 @@ export default function Login() {
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#241713]/80 via-[#241713]/10 to-[#241713]/30" />
 
-                <Link href="/" className="absolute left-8 top-8 flex items-center gap-2 text-[#F5EFE6]">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5EFE6] font-display text-sm font-semibold text-[#241713]">
-                        F
-                    </span>
-                    <span className="font-display text-lg tracking-tight">Fare</span>
-                </Link>
+               
 
                 <p className="absolute bottom-8 left-8 right-8 font-display text-2xl leading-snug text-[#F5EFE6]">
                     Good pizza, better company.
