@@ -7,7 +7,7 @@ import dns from 'node:dns';
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const dbUrl = process.env.DATABASE_URL;
-const authUrl = 'https://pizza-verse-blue.vercel.app';
+const authUrl =  process.env.BETTER_AUTH_URL
 const authSecret = process.env.BETTER_AUTH_SECRET;
 const googleId = process.env.GOOGLE_CLIENT_ID;
 const googleSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -67,7 +67,7 @@ export const auth = betterAuth({
         },
         trustedOrigins: [
             authUrl!, 
-            "https://pizza-verse-blue.vercel.app", 
+            "https://pizza-verse-blue.vercel.app/", 
             "https://pizza-verse-bakcend.vercel.app"
         ]
     }
