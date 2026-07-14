@@ -9,9 +9,9 @@ import { usePizzaall, useReservePizza } from "@/lib/getData";
 import type { Pizza, PizzaSize } from "@/types/restaurant";
 import { useSession } from "@/lib/auth-client";
 
-type PizzaDoc = Pizza & { _id: string };
+type PizzaDoc = Pizza & { _id: string } & { avatar: string };
 
-const EASE = [0.22, 1, 0.36, 1];
+
 
 export default function PizzaInfo() {
     const { id } = useParams<{ id: string }>();
@@ -83,7 +83,7 @@ function PizzaImage({ pizza }: { pizza: PizzaDoc }) {
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6,   }}
+            transition={{ duration: 0.6, }}
             className="relative h-72 w-full overflow-hidden rounded-[2rem] shadow-xl sm:h-96 lg:h-full lg:min-h-[420px]"
         >
             <Image
@@ -115,7 +115,7 @@ function PizzaHeader({ pizza }: { pizza: PizzaDoc }) {
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1,  }}
+            transition={{ duration: 0.6, delay: 0.1, }}
         >
             <p className="eyebrow text-[#A8672A]">
                 {pizza.neighbourhood}, {pizza.city}
@@ -351,7 +351,7 @@ function Reviews({ pizza }: { pizza: PizzaDoc }) {
                         >
                             <div className="flex items-center gap-3">
                                 <div className="relative h-9 w-9 overflow-hidden rounded-full">
-                                    <Image src={review.avatar} alt={review.author} fill className="object-cover" />
+                                    <Image src={review.avatar ?? ''} alt={review.author} fill className="object-cover" />
                                 </div>
                                 <div>
                                     <p className="text-sm font-semibold">{review.author}</p>
