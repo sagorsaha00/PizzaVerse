@@ -20,7 +20,7 @@ export default function Login() {
         mutationFn: async (formData: FormData) => {
             const email = formData.get("email");
             const password = formData.get("password");
-            const response = await fetch("http://localhost:3001/loginUser", {
+            const response = await fetch("https://pizza-verse-bakcend.vercel.app/loginUser", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
@@ -72,7 +72,7 @@ export default function Login() {
                     name: u.name ?? "",
                     email: u.email ?? "",
                     picUrl: u.image ?? u.picUrl ?? "",
-                    role: u.role ?? "user",
+               
                 });
             }
         } catch (error) {

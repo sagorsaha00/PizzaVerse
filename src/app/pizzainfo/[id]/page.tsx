@@ -83,7 +83,7 @@ function PizzaImage({ pizza }: { pizza: PizzaDoc }) {
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE }}
+            transition={{ duration: 0.6,   }}
             className="relative h-72 w-full overflow-hidden rounded-[2rem] shadow-xl sm:h-96 lg:h-full lg:min-h-[420px]"
         >
             <Image
@@ -115,7 +115,7 @@ function PizzaHeader({ pizza }: { pizza: PizzaDoc }) {
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
+            transition={{ duration: 0.6, delay: 0.1,  }}
         >
             <p className="eyebrow text-[#A8672A]">
                 {pizza.neighbourhood}, {pizza.city}

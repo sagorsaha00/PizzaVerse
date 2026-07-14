@@ -5,7 +5,7 @@ import type { ReservePayload } from '../types/restaurant'
 
 
 
-const uri = 'http://localhost:3001'
+const uri = 'https://pizza-verse-bakcend.vercel.app'
 
 
 

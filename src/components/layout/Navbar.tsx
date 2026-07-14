@@ -39,9 +39,7 @@ export default function Navbar() {
     };
   }, []);
 
-  // ✅ If better-auth reports a cookie session (e.g. after Google login)
-  // but localStorage doesn't know about it yet, mirror it in so the rest
-  // of the app (which reads localStorage) stays consistent.
+ 
   useEffect(() => {
     if (session?.user && !authState?.isLoggedIn) {
       const u = session.user as any;
@@ -52,7 +50,7 @@ export default function Navbar() {
           name: u.name ?? "",
           email: u.email ?? "",
           picUrl: u.image ?? u.picUrl ?? "",
-          role: u.role ?? "user",
+         
         },
       };
       localStorage.setItem("library-auth-storage", JSON.stringify(mirrored));

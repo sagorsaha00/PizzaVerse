@@ -25,7 +25,7 @@ export default function Register() {
             const email = formData.get("email");
             const password = formData.get("password");
 
-            const response = await fetch("http://localhost:3001/CreateUsers", {
+            const response = await fetch("https://pizza-verse-bakcend.vercel.app/CreateUsers", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, password }),

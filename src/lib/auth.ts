@@ -68,7 +68,7 @@ export const auth = betterAuth({
         trustedOrigins: [
             authUrl!, 
             "http://localhost:3000", 
-            "http://localhost:3001"
+            "https://pizza-verse-bakcend.vercel.app"
         ]
     }
 });

@@ -39,7 +39,7 @@ export default function Testimonials() {
                   <p className="text-sm font-semibold text-ink">
                     {t.author}
                   </p>
-                  <p className="text-xs text-ink/50">{t.role}</p>
+                 
                 </div>
               </figcaption>
             </figure>

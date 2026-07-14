@@ -40,7 +40,7 @@ export default function DashBoard() {
   const { data: reserveData, isLoading, error } = useQuery<ReservationItem[]>({
     queryKey: ['reserveBooks', email],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:3001/getReserveBook?email=${encodeURIComponent(email!)}`, {
+      const response = await fetch(`https://pizza-verse-bakcend.vercel.app/getReserveBook?email=${encodeURIComponent(email!)}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });

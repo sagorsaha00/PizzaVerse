@@ -152,7 +152,7 @@ function PageHeader() {
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: EASE }}
+                    transition={{ duration: 0.5,  }}
                     className="eyebrow text-[#A8672A]"
                 >
                     Wood-fired, Chattogram
@@ -160,7 +160,7 @@ function PageHeader() {
                 <motion.h1
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.05, ease: EASE }}
+                    transition={{ duration: 0.6, delay: 0.05,  }}
                     className="mt-2 font-display text-4xl font-medium leading-tight sm:text-5xl"
                 >
                     All pizzas
@@ -168,7 +168,7 @@ function PageHeader() {
                 <motion.p
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
+                    transition={{ duration: 0.6, delay: 0.1,  }}
                     className="mt-3 max-w-lg text-sm text-[#241713]/60"
                 >
                     Every pie on Fare, searchable by name, cuisine, neighbourhood, or
@@ -264,7 +264,7 @@ function PizzaGrid({ pizzas, gridKey }: { pizzas: PizzaDoc[]; gridKey: string })
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.3, ease: EASE }}
+                transition={{ duration: 0.3,  }}
                 className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
             >
                 {pizzas.map((pizza) => (
@@ -367,7 +367,7 @@ function Pagination({
                             <motion.span
                                 layoutId="page-pill"
                                 className="absolute inset-0 -z-10 rounded-full bg-[#C1440E]"
-                                transition={{ duration: 0.3, ease: EASE }}
+                                transition={{ duration: 0.3,  }}
                             />
                         )}
                         {pageNumber}
