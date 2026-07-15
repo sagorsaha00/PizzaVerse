@@ -1,45 +1,17 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { NextRequest } from "next/server";
-interface sessionData {
-    session: {
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        userId: string;
-        expiresAt: Date;
-        token: string;
-        ipAddress?: string | null | undefined;
-        userAgent?: string | null | undefined;
-    };
-    user: {
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        email: string;
-        emailVerified: boolean;
-        name: string;
-        image?: string | null | undefined;
-    };
-}
 
 export async function proxy(request: NextRequest) {
-    const data = localStorage.getItem("library-auth-storage");
-    console.log("Data", data)
-    const session = data ? JSON.parse(data) : null;
-
+    const isLoggedIn = request.cookies.get("isLoggedIn")?.value === "true";
     const { pathname } = request.nextUrl;
-    if (session && pathname === "/login" || session && pathname === "/register") {
+    if (isLoggedIn && (pathname === "/login" || pathname === "/register")) {
         return NextResponse.redirect(new URL("/", request.url));
-    } else if (!session) {
-        const loginUrl = new URL("/login", request.url);
-        return NextResponse.redirect(loginUrl);
+    }
+    if (!isLoggedIn && (pathname === "/dashboard" || pathname === "/addpizza")) {
+        return NextResponse.redirect(new URL("/login", request.url));
     }
     return NextResponse.next();
 }
-
-
 export const config = {
-    matcher: ["/dashboard", "/addpizza"],
+    matcher: ["/dashboard", "/addpizza", "/login", "/register"],
 };

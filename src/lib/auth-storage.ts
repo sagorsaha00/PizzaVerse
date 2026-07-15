@@ -11,15 +11,17 @@ export interface AuthData {
 }
 
 const KEY = "library-auth-storage";
-
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 export function saveAuth(user: AuthUser) {
     const payload: AuthData = { user, isLoggedIn: true };
     localStorage.setItem(KEY, JSON.stringify(payload));
+    document.cookie = `isLoggedIn=true; path=/; max-age=${COOKIE_MAX_AGE}`;
     window.dispatchEvent(new Event("auth-changed"));
 }
 
 export function clearAuth() {
     localStorage.removeItem(KEY);
+    document.cookie = "isLoggedIn=; path=/; max-age=0";
     window.dispatchEvent(new Event("auth-changed"));
 }
 
