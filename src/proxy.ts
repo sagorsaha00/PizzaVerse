@@ -25,9 +25,9 @@ interface sessionData {
 }
 
 export async function proxy(request: NextRequest) {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    }) as sessionData | null
+    const data = localStorage.getItem("library-auth-storage");
+    console.log("Data", data)
+    const session = data ? JSON.parse(data) : null;
 
     const { pathname } = request.nextUrl;
     if (session && pathname === "/login" || session && pathname === "/register") {
@@ -41,5 +41,5 @@ export async function proxy(request: NextRequest) {
 
 
 export const config = {
-    matcher: ["/dashboard","/addpizza"],
+    matcher: ["/dashboard", "/addpizza"],
 };
