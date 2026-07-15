@@ -28,8 +28,12 @@ export default function PizzaInfo() {
 
 function PizzaDetail({ pizza }: { pizza: PizzaDoc }) {
     const [selectedSize, setSelectedSize] = useState<PizzaSize>(pizza.pizzaSize[0]);
-    const { data: session } = useSession();
+    const data = localStorage.getItem("library-auth-storage");
+    console.log("Data", data)
+    const session = data ? JSON.parse(data) : null;
+    console.log('session', session);
     const email = session?.user?.email;
+    console.log("email",email)
     const name = session?.user?.name;
     return (
         <div className="min-h-screen bg-[#F5EFE6] text-[#241713]">
