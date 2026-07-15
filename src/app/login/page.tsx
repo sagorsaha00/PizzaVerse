@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { saveAuth } from "@/lib/auth-storage";
+import { useRouter } from "next/navigation";
 
 const PIZZA_IMAGE =
     "https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1200&auto=format&fit=crop";
@@ -16,6 +17,7 @@ const inputStyles =
 const labelStyles = "mb-1.5 block text-xs font-semibold text-[#241713]/70";
 
 export default function Login() {
+    const router = useRouter();
     const loginMutation = useMutation({
         mutationFn: async (formData: FormData) => {
             const email = formData.get("email");
@@ -33,9 +35,8 @@ export default function Login() {
             return response.json();
         },
         onSuccess: (data) => {
-          
             saveAuth(data.user);
-            console.log("Login successful:", data);
+            router.push("/");
         },
         onError: (error) => {
             console.error("Login failed:", error.message);
@@ -50,7 +51,7 @@ export default function Login() {
 
     const handleGoogleSignIn = async () => {
         try {
-            const {  error } = await authClient.signIn.social({
+            const { error } = await authClient.signIn.social({
                 provider: "google",
                 callbackURL: "/",
             });
@@ -60,7 +61,7 @@ export default function Login() {
                 return;
             }
 
-            
+
             const session = await authClient.getSession();
             if (session?.data?.user) {
                 const u = session.data.user as any;
@@ -69,7 +70,7 @@ export default function Login() {
                     name: u.name ?? "",
                     email: u.email ?? "",
                     picUrl: u.image ?? u.picUrl ?? "",
-               
+
                 });
             }
         } catch (error) {
@@ -90,7 +91,7 @@ export default function Login() {
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#241713]/80 via-[#241713]/10 to-[#241713]/30" />
 
-               
+
 
                 <p className="absolute bottom-8 left-8 right-8 font-display text-2xl leading-snug text-[#F5EFE6]">
                     Good pizza, better company.
