@@ -15,10 +15,12 @@ const KEY = "library-auth-storage";
 export function saveAuth(user: AuthUser) {
     const payload: AuthData = { user, isLoggedIn: true };
     localStorage.setItem(KEY, JSON.stringify(payload));
+    window.dispatchEvent(new Event("auth-changed"));
 }
 
 export function clearAuth() {
     localStorage.removeItem(KEY);
+    window.dispatchEvent(new Event("auth-changed"));
 }
 
 export function readAuth(): AuthData | null {
