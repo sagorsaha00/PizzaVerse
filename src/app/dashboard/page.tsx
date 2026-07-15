@@ -34,8 +34,8 @@ interface ReservationItem {
 }
 
 export default function DashBoard() {
-  const data = localStorage.getItem("library-auth-storage");
-  const session = data ? JSON.parse(data) : null;
+  const data = typeof window !== "undefined" ? localStorage.getItem("library-auth-storage") : null;
+  const session = JSON.parse(data!);
   const email = session?.user?.email;
 
   const { data: reserveData, isLoading, error } = useQuery<ReservationItem[]>({
