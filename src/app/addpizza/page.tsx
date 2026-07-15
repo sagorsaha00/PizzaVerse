@@ -7,21 +7,21 @@ import { useMutation } from "@tanstack/react-query";
 
 export default function AddPizzaPage() {
     const router = useRouter();
-    const { data: session, isPending } = authClient.useSession();
+    const data = typeof window !== "undefined" ? localStorage.getItem("library-auth-storage") : null;
+    const session = JSON.parse(data!);
 
- 
     const [title, setTitle] = useState("");
     const [shortDesc, setShortDesc] = useState("");
     const [fullDesc, setFullDesc] = useState("");
     const [price, setPrice] = useState("");
     const [imageUrl, setImageUrl] = useState("");
 
-   
+
     useEffect(() => {
-        if (!isPending && !session) {
+        if (!session) {
             router.push("/login");
         }
-    }, [session, isPending, router]);
+    }, [session, router]);
 
     const addPizzaMutation = useMutation({
         mutationFn: async (payload: any) => {
@@ -71,7 +71,7 @@ export default function AddPizzaPage() {
         addPizzaMutation.mutate(payload);
     };
 
-    if (isPending || !session) {
+    if ( !data || !session) {
         return (
             <div className="flex items-center justify-center bg-[#F4EFEA]">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#C1440E] border-t-transparent" />
@@ -82,7 +82,7 @@ export default function AddPizzaPage() {
     return (
         <div className=" bg-[#F4EFEA] px-12 py-12 flex items-center justify-center text-[#1A100E]">
             <div className="w-full max-w-xl rounded-[24px] border border-[#1A100E]/10 bg-[#FAF7F2] p-8 md:p-10 shadow-sm">
-            
+
                 <div className="inline-block rounded-full bg-[#FAF7F2] border border-[#1A100E]/10 px-3 py-1 text-[10px] font-bold tracking-[2px] uppercase text-[#1A100E]/60 mb-3">
                     Oven Master Input
                 </div>
@@ -92,7 +92,7 @@ export default function AddPizzaPage() {
                 </h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-             
+
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-[1px] text-[#1A100E]/70 mb-2">Title</label>
                         <input
@@ -105,7 +105,7 @@ export default function AddPizzaPage() {
                         />
                     </div>
 
-                   
+
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-[1px] text-[#1A100E]/70 mb-2">Short description</label>
                         <input
@@ -118,7 +118,7 @@ export default function AddPizzaPage() {
                         />
                     </div>
 
-                
+
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-[1px] text-[#1A100E]/70 mb-2">Full description</label>
                         <textarea
@@ -131,7 +131,7 @@ export default function AddPizzaPage() {
                         />
                     </div>
 
-                
+
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-[1px] text-[#1A100E]/70 mb-2">Price (BDT)</label>
                         <input
