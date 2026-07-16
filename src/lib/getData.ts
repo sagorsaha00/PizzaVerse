@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import type { ReservePayload } from '../types/restaurant'
+import { useRouter } from "next/navigation";
 
 
 
@@ -48,10 +49,11 @@ export const reservePizza = async (data: ReservePayload) => {
     return result;
 };
 export const useReservePizza = () => {
+    const router = useRouter()
     return useMutation({
         mutationFn: reservePizza,
         onSuccess: (data) => {
-            console.log("Reservation Successful", data);
+            router.push("/dashboard")
         },
 
         onError: (error: Error) => {
