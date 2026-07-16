@@ -2,13 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
 import { useMutation } from "@tanstack/react-query";
 
 export default function AddPizzaPage() {
-    const router = useRouter();
-    const data = typeof window !== "undefined" ? localStorage.getItem("library-auth-storage") : null;
-    const session = JSON.parse(data!);
+
 
     const [title, setTitle] = useState("");
     const [shortDesc, setShortDesc] = useState("");
@@ -16,7 +13,9 @@ export default function AddPizzaPage() {
     const [price, setPrice] = useState("");
     const [imageUrl, setImageUrl] = useState("");
 
-
+    const router = useRouter();
+    const data = typeof window !== "undefined" ? localStorage.getItem("library-auth-storage") : null;
+    const session = JSON.parse(data!);
     useEffect(() => {
         if (!session) {
             router.push("/login");
@@ -71,7 +70,7 @@ export default function AddPizzaPage() {
         addPizzaMutation.mutate(payload);
     };
 
-    if ( !data || !session) {
+    if (!data || !session) {
         return (
             <div className="flex items-center justify-center bg-[#F4EFEA]">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#C1440E] border-t-transparent" />

@@ -1,9 +1,8 @@
 'use client';
 
-import { useSession } from '@/lib/auth-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 // Typescript interfaces mapping directly to your MongoDB payload shape
 interface Drink {
@@ -34,10 +33,16 @@ interface ReservationItem {
 }
 
 export default function DashBoard() {
+  const router = useRouter();
   const data = typeof window !== "undefined" ? localStorage.getItem("library-auth-storage") : null;
   const session = JSON.parse(data!);
   const email = session?.user?.email;
 
+  useEffect(() => {
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, router]);
   const { data: reserveData, isLoading, error } = useQuery<ReservationItem[]>({
     queryKey: ['reserveBooks', email],
     queryFn: async () => {

@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { saveAuth } from "@/lib/auth-storage";
+import { useEffect } from "react";
 
 const PIZZA_IMAGE =
     "https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1200&auto=format&fit=crop";
@@ -18,7 +19,14 @@ const labelStyles = "mb-1.5 block text-xs font-semibold text-[#241713]/70";
 
 export default function Register() {
     const router = useRouter();
+    const data = typeof window !== "undefined" ? localStorage.getItem("library-auth-storage") : null;
+    const session = JSON.parse(data!);
 
+    useEffect(() => {
+        if (session) {
+            router.push("/dashboard");
+        }
+    }, [session, router]);
     const registerMutation = useMutation({
         mutationFn: async (formData: FormData) => {
             const name = formData.get("name");
@@ -94,7 +102,7 @@ export default function Register() {
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#241713]/80 via-[#241713]/10 to-[#241713]/30" />
 
-                 
+
 
                 <p className="absolute bottom-8 left-8 right-8 font-display text-2xl leading-snug text-[#F5EFE6]">
                     Good pizza, better company.

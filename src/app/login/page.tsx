@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { saveAuth } from "@/lib/auth-storage";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const PIZZA_IMAGE =
     "https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1200&auto=format&fit=crop";
@@ -18,6 +19,15 @@ const labelStyles = "mb-1.5 block text-xs font-semibold text-[#241713]/70";
 
 export default function Login() {
     const router = useRouter();
+    const data = typeof window !== "undefined" ? localStorage.getItem("library-auth-storage") : null;
+    const session = JSON.parse(data!);
+
+    useEffect(() => {
+        if (session) {
+            router.push("/dashboard");
+        }
+    }, [session, router]);
+
     const loginMutation = useMutation({
         mutationFn: async (formData: FormData) => {
             const email = formData.get("email");
